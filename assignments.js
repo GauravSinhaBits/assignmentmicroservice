@@ -5,8 +5,24 @@ const request = require('request');
 const axios = require('axios')
 const port = process.argv.slice(2)[0];
 const app = express();
+const cors = require('cors');
 
 app.use(bodyParser.json());
+
+const corsOpts = {
+    origin: '*',
+  
+    methods: [
+      'GET',
+      'POST',
+      'DELETE',
+    ],
+  
+    allowedHeaders: [
+      'Content-Type',
+    ],
+  };
+  app.use(cors(corsOpts));
 
 const mongoose = require('mongoose');
 require("./Assignment")
@@ -14,10 +30,10 @@ const Assignment =mongoose.model("Assignment");
 
 //const {MongoClient} = require('mongodb');
 
-const tasksService = 'http://localhost:8081/';
-const usersService = 'http://localhost:8082/';
 
 
+const tasksService = 'http://192.168.1.220:3434/';
+const usersService = 'http://192.168.1.220:3535/';
 const uri ="mongodb+srv://ToDoUser:ToDo%40Password@cluster0.fa1jn.mongodb.net/Assignments?retryWrites=true&w=majority";
 
 
@@ -55,7 +71,7 @@ app.get('/getassignmentdetail/:id', (req, res) => {
 axios.get(tasksService + "task/" + assignment.taskid).then((task)=>{
     var assignmentObj = {assignmentid: req.params.id, taskname: task.data.displayname,username: '' }
 
-    console.log(assignmentObj);
+    // console.log(assignmentObj);
 
     axios.get(usersService + "user/" + assignment.userid).then((user) => {
         assignmentObj.username = user.data.name
